@@ -580,11 +580,14 @@ void ControlTabWidget::saveCameraPoseBtnClicked(bool clicked)
 
   Eigen::Vector3d t = camera_robot_pose_.translation();
   Eigen::Vector3d r = camera_robot_pose_.rotation().eulerAngles(0, 1, 2);
+  Eigen::Quaterniond q(camera_robot_pose_.rotation());
   std::stringstream ss;
   ss << "<launch>\n";
   ss << "<node pkg=\"tf2_ros\" type=\"static_transform_publisher\" name=\"camera_link_broadcaster\"\n";
-  ss << "      args=\"" << t[0] << " " << t[1] << " " << t[2] << " " << r[0] << " " << r[1] << " " << r[2] << " "
+  ss << "      args=\"" << t[0] << " " << t[1] << " " << t[2] << " " << q.w() << " " << q.x() << " " << q.y() << " " << q.z() << " "
      << from_frame << " " << to_frame << "\" />\n";
+  ss << "<!-- above quaternion is from eigen in the form qw, qx, qz, qz -->"<< "\n"  ; 
+  ss << "<!-- euler  angles in ypr form "<< r[0] << " " << r[1] << " " << r[2]  <<"-->"<< "\n"  ; 
   ss << "</launch>";
   out << ss.str().c_str();
 }
